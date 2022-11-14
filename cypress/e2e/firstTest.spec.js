@@ -135,7 +135,7 @@ describe('Our first suite', () => {
 
     })
 
-    it.only('assert property', () => {
+    it('assert property', () => {
 
         cy.visit('http://localhost:4200/pages')
         cy.contains('Forms').click()
@@ -146,6 +146,56 @@ describe('Our first suite', () => {
             cy.get('nb-calendar-day-picker').contains('17').click()
             cy.wrap(input).invoke('prop', 'value').should('contains', 'Nov 17, 2022')
         })
+
+    })
+
+    it('radio button', () => {
+
+        cy.visit('http://localhost:4200/pages')
+        cy.contains('Forms').click()
+        cy.contains('Form Layouts').click()
+
+        cy.contains('nb-card', 'Using the Grid').find('[type="radio"]').then( radioButtons => {
+
+            // Verify that first radio button is found and checked
+            cy.wrap(radioButtons)
+                .first()
+                .check({force: true})
+                .should('be.checked')
+
+            // Verify second radio button is found and checked
+            // Setting eq(1) -> that means that second index (radio button) will be detected
+            cy.wrap(radioButtons)
+                .eq(1)
+                .check({force: true})
+
+            // Verify that first is unchecked after second is marked as checked
+            // Setting eq(0) -> that means that first radio button is found it's the same as .first()
+            cy.wrap(radioButtons)
+                .eq(0)
+                .should('not.be.be.checked')
+
+            // Verify that third radio button is disabled 
+            cy.wrap(radioButtons)
+                .eq(2)
+                .should('be.disabled')
+
+        })
+
+    })
+
+    it('check boxes', () => {
+
+        cy.visit('http://localhost:4200/pages')
+        cy.contains('Modal & Overlays').click()
+        cy.contains('Toastr').click()
+
+        // Verify all three checkboxes and mark them as checked
+        cy.get('[type="checkbox"]').check({force: true})
+
+        // Use click to uncheck checkbox
+        cy.get('[type="checkbox"]').eq(0).click({force: true})
+        cy.get('[type="checkbox"]').eq(1).click({force: true})
 
     })
 
