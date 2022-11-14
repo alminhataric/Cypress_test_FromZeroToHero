@@ -1,6 +1,7 @@
 ///<reference types="cypress" />
 
 
+
 describe('Our first suite', () => {
 
     it('first test', () => {
@@ -196,6 +197,51 @@ describe('Our first suite', () => {
         // Use click to uncheck checkbox
         cy.get('[type="checkbox"]').eq(0).click({force: true})
         cy.get('[type="checkbox"]').eq(1).click({force: true})
+
+    })
+
+    it('lists and dropdowns', () => {
+
+        cy.visit('http://localhost:4200/pages')
+
+        // 1. Example of changing theme for only one color
+
+        cy.get('nav nb-select').click()
+        // Changing the theme to Dark
+
+        cy.get('.options-list').contains('Dark').click()
+        // Verify value for dropdown is changed to Dark
+
+        cy.get('nav nb-select').should('contain', 'Dark')
+        // Verify background color for nav is the sam as on styles
+
+        cy.get('nb-layout-header nav').should('have.css', 'background-color', 'rgb(34, 43, 69)')
+
+        // 2. Example of changing theme for all colors
+        cy.get('nav nb-select').then( dropdown => {
+            cy.wrap(dropdown).click()
+            cy.get('.options-list nb-option').each( (listItem, index) => {
+                const itemText = listItem.text().trim()
+
+                // Object of colors to go through
+                const colors = {
+                    "Light": "rgb(255, 255, 255)",
+                    "Dark": "rgb(34, 43, 69)",
+                    "Cosmic": "rgb(50, 50, 89)",
+                    "Corporate": "rgb(255, 255, 255)"
+                }
+
+                // Click and validate themes one by one
+                cy.wrap(listItem).click()
+                cy.wrap(dropdown).should('contain', itemText)
+                cy.get('nb-layout-header nav').should('have.css', 'background-color', colors[itemText])
+                if( index < 3){
+                    cy.wrap(dropdown).click()
+                }
+                
+            })
+        })
+
 
     })
 
