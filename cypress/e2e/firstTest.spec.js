@@ -112,11 +112,16 @@ describe('Our first suite', () => {
         cy.contains('Form Layouts').click()
 
         //1
-        cy.get('[for="exampleInputEmail1"]').should('contain', 'Email address')
+        cy.get('[for="exampleInputEmail1"]')
+            .should('contain', 'Email address')
+            .should('have.class', 'label')
+            .and('have.text', 'Email address')
 
         //2
         cy.get('[for="exampleInputEmail1"]').then( label => {
-            expect(label.text() ).to.equal('Email address')
+            expect(label.text()).to.equal('Email address')
+            expect(label).to.have.class('label')
+            expect(label).to.have.text('Email address')
         })
 
         //3
@@ -170,6 +175,7 @@ describe('Our first suite', () => {
             let dateAssert = selectDayFromCurrent(300)
 
             cy.wrap(input).invoke('prop', 'value').should('contains', dateAssert)
+            cy.wrap(input).should('have.value', dateAssert)
         })
 
     })
@@ -327,7 +333,7 @@ describe('Our first suite', () => {
 
     })
 
-    it.only('dialog box', () => {
+    it('dialog box', () => {
 
         cy.visit('http://localhost:4200/pages')
         cy.contains('Tables & Data').click()
@@ -346,13 +352,11 @@ describe('Our first suite', () => {
             expect(stub.getCall(0)).to.be.calledWith('Are you sure you want to delete?')
         })
 
-         // If you want to select Cancel button
-         cy.get('tbody tr').first().find('.nb-trash').click()
-         cy.on('window:confirm', () => false) 
+        // If you want to select Cancel button
+        cy.get('tbody tr').first().find('.nb-trash').click()
+        cy.on('window:confirm', () => false) 
 
     })
-
-
 
 })
 
