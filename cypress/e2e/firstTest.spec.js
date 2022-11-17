@@ -314,6 +314,44 @@ describe('Our first suite', () => {
         })
     })
 
+    it('tooltip', () => {
+
+        cy.visit('http://localhost:4200/pages')
+        cy.contains('Modal & Overlays').click()
+        cy.contains('Tooltip').click()
+
+        // Find tooltip by using cypress locator
+        cy.contains('nb-card', 'Colored Tooltips')
+            .contains('Default').click()
+            cy.get('.top').should('contain', 'This is a tooltip')
+
+    })
+
+    it.only('dialog box', () => {
+
+        cy.visit('http://localhost:4200/pages')
+        cy.contains('Tables & Data').click()
+        cy.contains('Smart Table').click()
+
+        // Approach no1 which is not good for finding built in dialog boxes(like from Google)
+        cy.get('tbody tr').first().find('.nb-trash').click()
+        cy.on('window:confirm', (confirm) => {
+            expect(confirm).to.equal('Are you sure you want to delete?')
+        })
+
+        // Approach no2 
+        const stub = cy.stub()
+        cy.on('window:confirm',stub)
+        cy.get('tbody tr').first().find('.nb-trash').click().then(() => {
+            expect(stub.getCall(0)).to.be.calledWith('Are you sure you want to delete?')
+        })
+
+         // If you want to select Cancel button
+         cy.get('tbody tr').first().find('.nb-trash').click()
+         cy.on('window:confirm', () => false) 
+
+    })
+
 
 
 })
